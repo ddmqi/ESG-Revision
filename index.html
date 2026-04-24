@@ -1,0 +1,1325 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ISR — Révision Exam</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d0f14;
+    --surface: #151821;
+    --surface2: #1c2030;
+    --border: #252a3a;
+    --green: #22c55e;
+    --green-dim: #16a34a;
+    --gold: #f59e0b;
+    --blue: #60a5fa;
+    --red: #f87171;
+    --text: #e8eaf0;
+    --muted: #6b7280;
+    --accent: #818cf8;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* NAV */
+  nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(13,15,20,0.95);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 2rem;
+    height: 60px;
+  }
+
+  .nav-brand {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--green);
+    letter-spacing: 0.02em;
+  }
+
+  .nav-tabs {
+    display: flex;
+    gap: 4px;
+    background: var(--surface);
+    border-radius: 10px;
+    padding: 4px;
+    border: 1px solid var(--border);
+  }
+
+  .nav-tab {
+    padding: 6px 20px;
+    border-radius: 7px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: all 0.2s;
+    color: var(--muted);
+    border: none;
+    background: none;
+    letter-spacing: 0.01em;
+  }
+
+  .nav-tab.active {
+    background: var(--green);
+    color: #000;
+  }
+
+  .nav-tab:hover:not(.active) {
+    color: var(--text);
+    background: var(--surface2);
+  }
+
+  /* PAGES */
+  .page { display: none; }
+  .page.active { display: block; }
+
+  /* ===== COURS PAGE ===== */
+  .cours-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 3rem 2rem;
+  }
+
+  .cours-hero {
+    text-align: center;
+    margin-bottom: 4rem;
+    padding: 3rem 2rem;
+    background: linear-gradient(135deg, rgba(34,197,94,0.08) 0%, rgba(129,140,248,0.08) 100%);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .cours-hero::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle at center, rgba(34,197,94,0.04) 0%, transparent 60%);
+    pointer-events: none;
+  }
+
+  .cours-hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.4rem;
+    font-weight: 900;
+    line-height: 1.2;
+    margin-bottom: 0.5rem;
+    background: linear-gradient(135deg, #22c55e, #60a5fa);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .cours-hero p {
+    color: var(--muted);
+    font-size: 0.9rem;
+    margin-top: 0.5rem;
+  }
+
+  .badge {
+    display: inline-block;
+    background: rgba(34,197,94,0.15);
+    color: var(--green);
+    border: 1px solid rgba(34,197,94,0.3);
+    border-radius: 20px;
+    padding: 3px 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+  }
+
+  /* SECTIONS */
+  .section {
+    margin-bottom: 3rem;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    background: var(--surface);
+  }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.2rem 1.5rem;
+    background: var(--surface2);
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.2s;
+  }
+
+  .section-header:hover { background: #222736; }
+
+  .section-num {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.8rem;
+    font-weight: 500;
+    flex-shrink: 0;
+  }
+
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    flex: 1;
+  }
+
+  .section-toggle {
+    color: var(--muted);
+    font-size: 1.2rem;
+    transition: transform 0.3s;
+  }
+
+  .section.open .section-toggle { transform: rotate(180deg); }
+
+  .section-body {
+    display: none;
+    padding: 1.5rem;
+  }
+
+  .section.open .section-body { display: block; }
+
+  /* KEY POINTS */
+  .key-def {
+    background: rgba(34,197,94,0.07);
+    border-left: 3px solid var(--green);
+    border-radius: 0 8px 8px 0;
+    padding: 0.9rem 1.2rem;
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+    line-height: 1.6;
+  }
+
+  .key-def strong { color: var(--green); }
+
+  .kp-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .kp-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.7rem;
+    font-size: 0.88rem;
+    line-height: 1.5;
+    padding: 0.5rem 0.8rem;
+    border-radius: 8px;
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(255,255,255,0.04);
+  }
+
+  .kp-list li::before {
+    content: '▸';
+    color: var(--accent);
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .highlight { color: var(--gold); font-weight: 600; }
+  .highlight-blue { color: var(--blue); font-weight: 600; }
+  .highlight-green { color: var(--green); font-weight: 600; }
+  .highlight-red { color: var(--red); font-weight: 600; }
+
+  /* TABLES */
+  .mini-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.83rem;
+    margin: 1rem 0;
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  .mini-table th {
+    background: var(--surface2);
+    padding: 0.6rem 1rem;
+    text-align: left;
+    font-size: 0.75rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 600;
+  }
+
+  .mini-table td {
+    padding: 0.6rem 1rem;
+    border-top: 1px solid var(--border);
+    line-height: 1.4;
+  }
+
+  .mini-table tr:hover td { background: rgba(255,255,255,0.02); }
+
+  /* GRID */
+  .grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  @media (max-width: 600px) { .grid-2 { grid-template-columns: 1fr; } }
+
+  .card-mini {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1rem;
+  }
+
+  .card-mini h4 {
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+  }
+
+  .card-mini p, .card-mini li { font-size: 0.83rem; line-height: 1.5; color: #b0b8cc; }
+  .card-mini ul { padding-left: 1rem; }
+
+  .tag {
+    display: inline-block;
+    border-radius: 5px;
+    padding: 2px 8px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    margin-right: 4px;
+    margin-bottom: 4px;
+  }
+
+  .tag-green { background: rgba(34,197,94,0.15); color: var(--green); }
+  .tag-blue { background: rgba(96,165,250,0.15); color: var(--blue); }
+  .tag-gold { background: rgba(245,158,11,0.15); color: var(--gold); }
+  .tag-red { background: rgba(248,113,113,0.15); color: var(--red); }
+  .tag-purple { background: rgba(129,140,248,0.15); color: var(--accent); }
+
+  .sub-title {
+    font-size: 0.78rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    margin: 1.2rem 0 0.6rem;
+  }
+
+  .number-stat {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.8rem;
+    font-weight: 900;
+    color: var(--green);
+    line-height: 1;
+  }
+
+  .number-label { font-size: 0.78rem; color: var(--muted); margin-top: 2px; }
+
+  .stats-row {
+    display: flex;
+    gap: 1.5rem;
+    margin: 1rem 0;
+    flex-wrap: wrap;
+  }
+
+  .stat-block {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 0.8rem 1.2rem;
+    text-align: center;
+    flex: 1;
+    min-width: 100px;
+  }
+
+  hr.divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 1rem 0;
+  }
+
+  .scope-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.8rem;
+    margin: 1rem 0;
+  }
+
+  @media (max-width: 500px) { .scope-grid { grid-template-columns: 1fr; } }
+
+  .scope-card {
+    border-radius: 10px;
+    padding: 1rem;
+    text-align: center;
+  }
+
+  .scope-card h3 {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.75rem;
+    font-weight: 500;
+    margin-bottom: 0.4rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .scope-card p { font-size: 0.78rem; line-height: 1.4; }
+
+  .sfdr-grid {
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
+    gap: 0.6rem;
+    margin: 1rem 0;
+  }
+
+  @media (max-width: 500px) { .sfdr-grid { grid-template-columns: 1fr; } }
+
+  .sfdr-card {
+    border-radius: 10px;
+    padding: 0.9rem;
+    border: 1px solid;
+  }
+
+  .sfdr-card h4 { font-size: 0.8rem; font-weight: 700; margin-bottom: 0.3rem; }
+  .sfdr-card p { font-size: 0.75rem; color: #9ca3af; line-height: 1.4; }
+
+  /* ===== FLASHCARDS PAGE ===== */
+  .fc-container {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 2.5rem 2rem;
+  }
+
+  .fc-header {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+
+  .fc-header h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.8rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, #f59e0b, #f87171);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 0.3rem;
+  }
+
+  .fc-header p { color: var(--muted); font-size: 0.85rem; }
+
+  /* Progress */
+  .fc-progress-bar {
+    background: var(--surface2);
+    border-radius: 100px;
+    height: 6px;
+    margin: 1rem 0;
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+
+  .fc-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--green), var(--blue));
+    border-radius: 100px;
+    transition: width 0.4s ease;
+  }
+
+  .fc-counter {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    font-size: 0.82rem;
+  }
+
+  .fc-counter span { color: var(--muted); }
+  .fc-counter strong { color: var(--text); font-family: 'DM Mono', monospace; }
+
+  /* SCORE BADGES */
+  .score-row {
+    display: flex;
+    gap: 0.8rem;
+    margin-bottom: 1.5rem;
+    justify-content: center;
+  }
+
+  .score-badge {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.82rem;
+    font-weight: 600;
+  }
+
+  .score-badge.good { background: rgba(34,197,94,0.15); color: var(--green); border: 1px solid rgba(34,197,94,0.3); }
+  .score-badge.bad { background: rgba(248,113,113,0.15); color: var(--red); border: 1px solid rgba(248,113,113,0.3); }
+
+  /* CARD */
+  .flashcard-wrap {
+    perspective: 1000px;
+    margin-bottom: 1.5rem;
+    cursor: pointer;
+  }
+
+  .flashcard {
+    position: relative;
+    width: 100%;
+    min-height: 220px;
+    transform-style: preserve-3d;
+    transition: transform 0.5s cubic-bezier(0.4,0,0.2,1);
+    border-radius: 18px;
+  }
+
+  .flashcard.flipped { transform: rotateY(180deg); }
+
+  .fc-face {
+    position: absolute;
+    width: 100%;
+    min-height: 220px;
+    border-radius: 18px;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    text-align: center;
+    border: 1px solid var(--border);
+  }
+
+  .fc-front {
+    background: linear-gradient(135deg, var(--surface) 0%, var(--surface2) 100%);
+  }
+
+  .fc-back {
+    background: linear-gradient(135deg, rgba(34,197,94,0.07) 0%, rgba(96,165,250,0.07) 100%);
+    transform: rotateY(180deg);
+    border-color: rgba(34,197,94,0.3);
+  }
+
+  .fc-label {
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+    opacity: 0.5;
+  }
+
+  .fc-question {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.2rem;
+    font-weight: 700;
+    line-height: 1.4;
+    color: var(--text);
+  }
+
+  .fc-answer {
+    font-size: 0.9rem;
+    line-height: 1.6;
+    color: var(--text);
+  }
+
+  .fc-answer strong { color: var(--green); }
+  .fc-answer em { color: var(--gold); font-style: normal; font-weight: 600; }
+
+  .fc-hint {
+    margin-top: 1rem;
+    font-size: 0.75rem;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+  }
+
+  /* CONTROLS */
+  .fc-controls {
+    display: flex;
+    gap: 0.8rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 1.5rem;
+  }
+
+  .fc-btn {
+    padding: 10px 24px;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 600;
+    transition: all 0.2s;
+  }
+
+  .fc-btn:hover { opacity: 0.85; transform: translateY(-1px); }
+
+  .btn-flip { background: var(--surface2); color: var(--text); border: 1px solid var(--border); }
+  .btn-good { background: rgba(34,197,94,0.2); color: var(--green); border: 1px solid rgba(34,197,94,0.4); }
+  .btn-bad { background: rgba(248,113,113,0.2); color: var(--red); border: 1px solid rgba(248,113,113,0.4); }
+  .btn-prev { background: var(--surface); color: var(--muted); border: 1px solid var(--border); }
+  .btn-shuffle { background: rgba(129,140,248,0.15); color: var(--accent); border: 1px solid rgba(129,140,248,0.3); }
+  .btn-reset { background: rgba(245,158,11,0.15); color: var(--gold); border: 1px solid rgba(245,158,11,0.3); }
+
+  .fc-nav {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  /* CATEGORY FILTERS */
+  .fc-filters {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-bottom: 1.5rem;
+    justify-content: center;
+  }
+
+  .fc-filter {
+    padding: 5px 14px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--muted);
+    cursor: pointer;
+    font-size: 0.78rem;
+    font-weight: 500;
+    transition: all 0.2s;
+  }
+
+  .fc-filter.active {
+    border-color: var(--green);
+    color: var(--green);
+    background: rgba(34,197,94,0.1);
+  }
+
+  /* RESULT SCREEN */
+  .fc-result {
+    display: none;
+    text-align: center;
+    padding: 3rem 2rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+  }
+
+  .fc-result h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    margin-bottom: 1rem;
+  }
+
+  .result-score {
+    font-family: 'Playfair Display', serif;
+    font-size: 4rem;
+    font-weight: 900;
+    background: linear-gradient(135deg, var(--green), var(--blue));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin: 1rem 0;
+  }
+
+  /* keyboard hint */
+  .kb-hint {
+    text-align: center;
+    font-size: 0.73rem;
+    color: var(--muted);
+    margin-top: 1rem;
+    font-family: 'DM Mono', monospace;
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-brand">🌿 ISR Exam Prep</div>
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="showPage('cours')">📖 Cours</button>
+    <button class="nav-tab" onclick="showPage('flashcards')">🃏 Flashcards</button>
+  </div>
+</nav>
+
+<!-- ============================================================ COURS -->
+<div id="page-cours" class="page active">
+<div class="cours-container">
+
+  <div class="cours-hero">
+    <div class="badge">Assas · Magistère Banque Finance · Avril 2026</div>
+    <h1>L'Investissement Responsable</h1>
+    <p>Quels pouvoirs des investisseurs ? Synthèse complète pour l'examen</p>
+  </div>
+
+  <!-- SECTION 1 : LOBBYING ESG -->
+  <div class="section open">
+    <div class="section-header" onclick="toggleSection(this)">
+      <div class="section-num" style="background:rgba(129,140,248,0.2);color:var(--accent)">01</div>
+      <div class="section-title">Le Lobbying ESG</div>
+      <div class="section-toggle">▾</div>
+    </div>
+    <div class="section-body">
+      <div class="key-def"><strong>Définition :</strong> Ensemble des actions visant à <strong>influencer les règles, normes et comportements</strong> des acteurs économiques afin d'aligner le système financier avec des objectifs ESG.</div>
+      <div class="sub-title">Lobbying vs Engagement actionnarial</div>
+      <div class="grid-2">
+        <div class="card-mini">
+          <h4 style="color:var(--accent)">Lobbying ESG</h4>
+          <p>Agit à <strong>l'échelle du système</strong>. Transforme les règles du jeu économique globalement.</p>
+        </div>
+        <div class="card-mini">
+          <h4 style="color:var(--gold)">Engagement actionnarial</h4>
+          <p>Agit <strong>à l'intérieur des entreprises</strong>. Dialogue ciblé avec le management.</p>
+        </div>
+      </div>
+      <div class="sub-title">Exemple : Reclaim Finance</div>
+      <ul class="kp-list">
+        <li>Publication de rapports sur les financements fossiles</li>
+        <li>Classement des institutions financières selon leurs pratiques</li>
+        <li>Campagnes publiques pour dénoncer certaines activités</li>
+        <li>Pression médiatique et réputationnelle</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- SECTION 2 : LEVIERS INVESTISSEUR -->
+  <div class="section">
+    <div class="section-header" onclick="toggleSection(this)">
+      <div class="section-num" style="background:rgba(96,165,250,0.2);color:var(--blue)">02</div>
+      <div class="section-title">Les Leviers de l'Investisseur</div>
+      <div class="section-toggle">▾</div>
+    </div>
+    <div class="section-body">
+
+      <div class="sub-title">1. Le Voting ESG</div>
+      <div class="key-def"><strong>Voting ESG :</strong> Capacité des investisseurs à <strong>orienter ou contester</strong> les décisions du management en utilisant leur légitimité de propriétaires. C'est le seul moment où le rapport de force devient visible.</div>
+      <p style="font-size:0.85rem;color:var(--muted);margin-bottom:0.8rem">Un vote n'est jamais neutre — il envoie un message au marché, aux médias, aux autres investisseurs.</p>
+
+      <div class="sub-title">6 formes d'engagement de l'actionnaire activiste</div>
+      <ul class="kp-list">
+        <li><span class="tag tag-purple">1</span> S'engager de manière <strong>discrète</strong> avec le management</li>
+        <li><span class="tag tag-purple">2</span> <strong>Proposer des résolutions</strong> (propositions d'actionnaires)</li>
+        <li><span class="tag tag-purple">3</span> <strong>Voter</strong> (former des coalitions, exprimer son désaccord)</li>
+        <li><span class="tag tag-purple">4</span> <strong>Exprimer publiquement</strong> son mécontentement (médias)</li>
+        <li><span class="tag tag-purple">5</span> <strong>Initier une prise de contrôle</strong> (participation significative)</li>
+        <li><span class="tag tag-purple">6</span> <strong>Se retirer</strong> (vendre, prendre position opposée, désinvestir)</li>
+      </ul>
+
+      <hr class="divider">
+
+      <div class="sub-title">2. L'Engagement actionnarial (Amundi)</div>
+      <div class="key-def"><strong>Définition :</strong> Processus par lequel un investisseur entre en <strong>dialogue avec une entreprise</strong> pour influencer ses pratiques / stratégie / gouvernance vers davantage de durabilité.</div>
+      <p style="font-size:0.85rem;color:#b0b8cc;margin-bottom:1rem">Ne passe pas par un mécanisme institutionnel, mais par des échanges directs, des discussions stratégiques, une pression progressive.</p>
+      <div class="stats-row">
+        <div class="stat-block"><div class="number-stat">2 948</div><div class="number-label">émetteurs uniques engagés par Amundi en 2025</div></div>
+        <div class="stat-block"><div class="number-stat">40+</div><div class="number-label">analystes ESG & Vote dédiés (Stewardship)</div></div>
+      </div>
+
+      <hr class="divider">
+
+      <div class="sub-title">3. La Politique de Vote (données Russell 3000)</div>
+      <div class="key-def"><strong>Vote actionnarial :</strong> Mécanisme <strong>formel, public et institutionnel</strong> — il peut être contraignant. S'exprime en AG sur : gouvernance, stratégie, enjeux ESG.</div>
+      <div class="stats-row">
+        <div class="stat-block"><div class="number-stat">555</div><div class="number-label">résolutions votées en 2022 (Russell 3000)</div></div>
+        <div class="stat-block"><div class="number-stat">&lt;40%</div><div class="number-label">soutien moyen en gouvernance</div></div>
+        <div class="stat-block"><div class="number-stat">29%</div><div class="number-label">soutien en environnement & social</div></div>
+      </div>
+
+      <hr class="divider">
+
+      <div class="sub-title">4. Le Proxy Voting</div>
+      <div class="key-def"><strong>Proxy voting :</strong> Délégation du vote à un tiers. Pratique industrialisée car les asset managers détiennent des milliers d'entreprises. Acteurs clés : <em class="highlight">ISS</em> et <em class="highlight">Glass Lewis</em>.</div>
+      <div class="sub-title">Process en 7 étapes</div>
+      <ul class="kp-list">
+        <li>L'entreprise fixe l'ordre du jour de l'AG</li>
+        <li>La banque dépositaire vérifie les actionnaires (record date)</li>
+        <li>Les actionnaires reçoivent les documents</li>
+        <li>Recommandations de vote via sociétés spécialisées (ISS, Glass Lewis)</li>
+        <li>Instructions de vote via intermédiaire</li>
+        <li>Le vote a lieu à l'AG</li>
+        <li>Confirmation du vote pris en compte</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- SECTION 3 : FINANCE À IMPACT -->
+  <div class="section">
+    <div class="section-header" onclick="toggleSection(this)">
+      <div class="section-num" style="background:rgba(34,197,94,0.2);color:var(--green)">03</div>
+      <div class="section-title">La Finance à Impact</div>
+      <div class="section-toggle">▾</div>
+    </div>
+    <div class="section-body">
+      <div class="sub-title">Les 7 étapes de la finance responsable</div>
+      <table class="mini-table">
+        <thead><tr><th>#</th><th>Approche</th><th>Méthode</th></tr></thead>
+        <tbody>
+          <tr><td><span class="tag tag-red">1</span></td><td>Exclusion</td><td>Exclusion policy & negative (worst-in-class) screening</td></tr>
+          <tr><td><span class="tag tag-blue">2</span></td><td>Values</td><td>Norms-based screening</td></tr>
+          <tr><td><span class="tag tag-purple">3</span></td><td>Selection</td><td>Positive (best-in-class) screening</td></tr>
+          <tr><td><span class="tag tag-green">4</span></td><td>Thematic</td><td>Sustainability themed investing (ex : green bonds)</td></tr>
+          <tr><td><span class="tag tag-gold">5</span></td><td>Integration</td><td>ESG scoring intégré dans la gestion de portefeuille</td></tr>
+          <tr><td><span class="tag tag-purple">6</span></td><td>Engagement</td><td>Voting policy & shareholder activism</td></tr>
+          <tr><td><span class="tag tag-green">7</span></td><td><strong>Impact</strong></td><td><strong>Impact investing</strong></td></tr>
+        </tbody>
+      </table>
+
+      <div class="sub-title">Modèle I·A·M (GIIN / France Invest)</div>
+      <div class="key-def"><strong>Définition GIIN 2021 :</strong> Investissements réalisés avec l'intention de générer un <strong>impact social et environnemental positif, mesurable</strong>, en plus d'un rendement financier.</div>
+      <div class="grid-2">
+        <div class="card-mini"><h4 style="color:var(--green)">🎯 Intentionnalité</h4><p>L'intention de contribuer à un impact mesurable dès la conception.</p></div>
+        <div class="card-mini"><h4 style="color:var(--blue)">➕ Additionnalité</h4><p>L'impact positif n'aurait pas eu lieu sans cet investissement spécifique.</p></div>
+        <div class="card-mini"><h4 style="color:var(--gold)">📏 Mesurabilité</h4><p>Processus de mesure des impacts, KPIs, fréquence de reporting.</p></div>
+        <div class="card-mini"><h4 style="color:var(--accent)">🌐 ODD (UN SDGs)</h4><p>Framework international en 17 objectifs répartis en E / S / G.</p></div>
+      </div>
+
+      <div class="sub-title">Rapport ODD 2023 — Bilan mondial</div>
+      <div class="grid-2">
+        <div class="card-mini">
+          <h4 style="color:var(--red)">⚠️ Reculs</h4>
+          <ul>
+            <li>575 M de personnes resteront pauvres en 2030</li>
+            <li>+600 M touchés par la faim d'ici 2030</li>
+            <li>+1,1°C déjà atteint, seuil 1,5°C proche</li>
+          </ul>
+        </div>
+        <div class="card-mini">
+          <h4 style="color:var(--green)">✅ Avancées</h4>
+          <ul>
+            <li>Baisse mortalité infantile</li>
+            <li>Décès VIH/SIDA : -52%</li>
+            <li>Accès électricité : 91% mondiale</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 4 : TRANSITIONS EN PORTEFEUILLE -->
+  <div class="section">
+    <div class="section-header" onclick="toggleSection(this)">
+      <div class="section-num" style="background:rgba(245,158,11,0.2);color:var(--gold)">04</div>
+      <div class="section-title">Transitions en Portefeuille — Infrastructure Durable</div>
+      <div class="section-toggle">▾</div>
+    </div>
+    <div class="section-body">
+      <div class="sub-title">Gap de financement & scénarios AIE</div>
+      <div class="key-def">Il manque <strong>1 600 à 3 800 Mds$ par an</strong> pour financer la transition énergétique. COP 26 : 450 institutions financières, 130 000 Mds$ d'actifs, engagement Net Zero 2050.</div>
+
+      <div class="sub-title">Plans d'investissement durables mondiaux</div>
+      <div class="stats-row">
+        <div class="stat-block"><div class="number-stat">2 000</div><div class="number-label">Mds$ — American Jobs Plan (USA)</div></div>
+        <div class="stat-block"><div class="number-stat">750</div><div class="number-label">Mds$ — Next Gen EU (UE)</div></div>
+        <div class="stat-block"><div class="number-stat">1 400</div><div class="number-label">Mds$ — New Infra Initiative (Chine)</div></div>
+      </div>
+
+      <div class="sub-title">Scénarios climatiques AIE (+1,5°C vs +2°C)</div>
+      <table class="mini-table">
+        <thead><tr><th>Thématique</th><th>+1,5°C</th><th>+2°C</th></tr></thead>
+        <tbody>
+          <tr><td>Niveau de la mer (2100)</td><td>+26 à 77 cm</td><td>~10 cm de plus</td></tr>
+          <tr><td>Banquise arctique</td><td>1× / siècle</td><td>1× / 10 ans</td></tr>
+          <tr><td>Récifs coralliens</td><td>-70 à 90%</td><td>-99%</td></tr>
+          <tr><td>Vagues de chaleur</td><td>Forte hausse</td><td>Très forte hausse (+420 M exposés)</td></tr>
+          <tr><td>Stress hydrique</td><td>Impact important</td><td>2× plus exposés</td></tr>
+        </tbody>
+      </table>
+
+      <div class="sub-title">Energie propre vs fossile — Basculement 2023</div>
+      <p style="font-size:0.85rem;color:#b0b8cc">En 2023 : <strong class="highlight-green">1 700 Mds$</strong> investis en énergie propre, dépassant les fossiles pour la première fois. L'âge moyen des équipements industriels US est désormais &gt;10 ans → renouvellement urgent.</p>
+
+      <div class="sub-title">Processus Kepler Cheuvreux Global Infra ESG</div>
+      <div class="stats-row">
+        <div class="stat-block"><div class="number-stat">+2500</div><div class="number-label">univers de départ</div></div>
+        <div class="stat-block"><div class="number-stat">~300</div><div class="number-label">après sélection thématique</div></div>
+        <div class="stat-block"><div class="number-stat">~230</div><div class="number-label">après filtre ESG</div></div>
+        <div class="stat-block"><div class="number-stat">60</div><div class="number-label">titres en conviction</div></div>
+      </div>
+      <p style="font-size:0.8rem;color:var(--muted)">Exclusions : Tobacco, Coal, Oil & Gas + laggards ESG + controverses + UN Global Compact. Turnover annuel ~50%.</p>
+    </div>
+  </div>
+
+  <!-- SECTION 5 : RÉGLEMENTATION -->
+  <div class="section">
+    <div class="section-header" onclick="toggleSection(this)">
+      <div class="section-num" style="background:rgba(96,165,250,0.2);color:var(--blue)">05</div>
+      <div class="section-title">Révolution Réglementaire ESG</div>
+      <div class="section-toggle">▾</div>
+    </div>
+    <div class="section-body">
+      <div class="stats-row">
+        <div class="stat-block"><div class="number-stat">868</div><div class="number-label">réglementations ESG (PRI, 2022)</div></div>
+        <div class="stat-block"><div class="number-stat">78,8%</div><div class="number-label">issus de gouvernements & régulateurs</div></div>
+        <div class="stat-block"><div class="number-stat">72%</div><div class="number-label">s'appliquent aux corporates</div></div>
+      </div>
+
+      <div class="sub-title">5 Piliers du Plan d'Action Européen</div>
+      <table class="mini-table">
+        <thead><tr><th>#</th><th>Texte</th><th>Rôle</th></tr></thead>
+        <tbody>
+          <tr><td><span class="tag tag-green">1</span></td><td><strong>EU Taxonomy</strong></td><td>Classification des activités économiques durables (langage commun)</td></tr>
+          <tr><td><span class="tag tag-blue">2</span></td><td><strong>CSRD</strong></td><td>Reporting durabilité des entreprises (remplace NFRD)</td></tr>
+          <tr><td><span class="tag tag-purple">3</span></td><td><strong>SFDR</strong></td><td>Disclosure des acteurs financiers (Art. 6/8/9)</td></tr>
+          <tr><td><span class="tag tag-gold">4</span></td><td><strong>MiFID II / IDD</strong></td><td>Intégration ESG dans le conseil en investissement</td></tr>
+          <tr><td><span class="tag tag-red">5</span></td><td><strong>EU Benchmark</strong></td><td>Gouvernance des benchmarks, indices climatiques</td></tr>
+        </tbody>
+      </table>
+
+      <div class="sub-title">Taxonomie Européenne</div>
+      <div class="key-def">Détermine quelles activités économiques sont <strong>durables sur le plan environnemental</strong>. 3 critères cumulatifs : (1) respect des critères techniques, (2) <strong>Do No Significant Harm (DNSH)</strong>, (3) garanties sociales minimales.</div>
+      <div class="sub-title">6 Objectifs environnementaux de la Taxonomie</div>
+      <ul class="kp-list">
+        <li>Atténuation du changement climatique</li>
+        <li>Adaptation au changement climatique</li>
+        <li>Utilisation durable et protection des ressources en eau</li>
+        <li>Transition vers une économie circulaire</li>
+        <li>Prévention et réduction de la pollution</li>
+        <li>Protection et restauration de la biodiversité</li>
+      </ul>
+
+      <div class="sub-title">CSRD — Changement d'échelle</div>
+      <div class="key-def">Remplace la NFRD (trop limitée, trop flexible, peu comparable). Passe de <strong>~11 000</strong> à <strong>~50 000 entreprises</strong>. Introduit la <strong>double matérialité</strong> + audit par tiers indépendant.</div>
+      <p style="font-size:0.83rem;color:#b0b8cc;margin-top:0.5rem">Périmètre : grandes entreprises UE (2 critères sur 3 : 250 employés / 40M€ CA / 20M€ bilan) + sociétés cotées + entreprises non-UE actives dans l'UE.</p>
+
+      <div class="sub-title">SFDR — 3 articles</div>
+      <div class="sfdr-grid">
+        <div class="sfdr-card" style="border-color:rgba(107,114,128,0.4);background:rgba(107,114,128,0.05)">
+          <h4>Article 6</h4>
+          <p>Fonds "Autres" — aucune caractéristique E/S spécifique. Disclosure sur double matérialité seulement.</p>
+        </div>
+        <div class="sfdr-card" style="border-color:rgba(96,165,250,0.4);background:rgba(96,165,250,0.05)">
+          <h4 style="color:var(--blue)">Article 8</h4>
+          <p>Fonds "ESG" — promeuvent des caractéristiques E/S. Disclosure double matérialité + caract. E/S + Taxonomie.</p>
+        </div>
+        <div class="sfdr-card" style="border-color:rgba(34,197,94,0.4);background:rgba(34,197,94,0.05)">
+          <h4 style="color:var(--green)">Article 9</h4>
+          <p>Fonds "Durables" — objectif d'investissement durable. Disclosure + objectifs E/S + Taxonomie.</p>
+        </div>
+      </div>
+      <p style="font-size:0.78rem;color:var(--muted);margin-top:0.5rem">⚠️ Art. 8 & 9 = classifications réglementaires, PAS des labels (auto-déclaration, pas de certification externe)</p>
+
+      <div class="sub-title">Fit for 55</div>
+      <div class="key-def">Réduire les émissions de GES de l'UE d'au moins <strong>-55% d'ici 2030</strong> et atteindre la neutralité climatique en 2050. Budget social carbone : 65 Md€. Objectif forestier : 310 Mt CO₂e absorbés.</div>
+    </div>
+  </div>
+
+  <!-- SECTION 6 : SCOPES & GES -->
+  <div class="section">
+    <div class="section-header" onclick="toggleSection(this)">
+      <div class="section-num" style="background:rgba(248,113,113,0.2);color:var(--red)">06</div>
+      <div class="section-title">Greenhouse Gas Protocol & 3 Scopes</div>
+      <div class="section-toggle">▾</div>
+    </div>
+    <div class="section-body">
+      <div class="key-def"><strong>GES 1990→2019 :</strong> Émissions mondiales passées de <strong>38 Gt à 59 Gt CO₂-eq (+54%)</strong>. Le CO₂-FFI a augmenté de 167% sur la période.</div>
+
+      <div class="sub-title">Les 3 Scopes (GHG Protocol)</div>
+      <div class="scope-grid">
+        <div class="scope-card" style="background:rgba(248,113,113,0.1);border:1px solid rgba(248,113,113,0.3)">
+          <h3 style="color:var(--red)">Scope 1</h3>
+          <p>Émissions <strong>directes</strong> — flottes véhicules, énergie de production</p>
+        </div>
+        <div class="scope-card" style="background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.3)">
+          <h3 style="color:var(--gold)">Scope 2</h3>
+          <p>Émissions <strong>indirectes énergie</strong> — consommation électricité, vapeur, chaleur</p>
+        </div>
+        <div class="scope-card" style="background:rgba(96,165,250,0.1);border:1px solid rgba(96,165,250,0.3)">
+          <h3 style="color:var(--blue)">Scope 3</h3>
+          <p>Autres émissions <strong>indirectes</strong> — toute la chaîne de valeur amont & aval</p>
+        </div>
+      </div>
+      <div class="key-def">⚠️ <strong>80% des émissions totales</strong> de la plupart des secteurs sont en Scope 3. Secteurs très Scope 3 : pétrole/gaz, chimie, agroalimentaire, automobile.</div>
+
+      <div class="sub-title">5 Objectifs du GHG Protocol</div>
+      <ul class="kp-list">
+        <li>Standardisation internationale des calculs</li>
+        <li>Inventaire pertinent et objectif de toutes les sources GES</li>
+        <li>Réduction & simplification des coûts de calcul</li>
+        <li>Mise en place progressive d'un marché carbone</li>
+        <li>Attestation tangible des efforts de réduction</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- SECTION 7 : LABELS & GREEN BONDS -->
+  <div class="section">
+    <div class="section-header" onclick="toggleSection(this)">
+      <div class="section-num" style="background:rgba(34,197,94,0.2);color:var(--green)">07</div>
+      <div class="section-title">Labels ESG & Obligations Durables</div>
+      <div class="section-toggle">▾</div>
+    </div>
+    <div class="section-body">
+      <div class="key-def"><strong>Label ≠ Classification réglementaire.</strong> Un label implique des <strong>critères précis et publics</strong> + une <strong>validation par organisme indépendant</strong>. Les Articles SFDR sont des auto-déclarations, pas des labels.</div>
+
+      <div class="sub-title">Marché des labels ESG en Europe (Novethic)</div>
+      <div class="stats-row">
+        <div class="stat-block"><div class="number-stat">2 733</div><div class="number-label">fonds labellisés ESG</div></div>
+        <div class="stat-block"><div class="number-stat">1 307</div><div class="number-label">Mds € d'encours (AUM)</div></div>
+        <div class="stat-block"><div class="number-stat">7%</div><div class="number-label">du marché européen des fonds</div></div>
+      </div>
+      <p style="font-size:0.83rem;color:#b0b8cc;margin-bottom:1rem">2 labels dominent : <strong class="highlight-green">Label ISR</strong> (France, 1 354 fonds) + <strong class="highlight-blue">Towards Sustainability</strong> (Belgique, 771 fonds) → 66,8% des fonds, 80,8% des encours.</p>
+
+      <div class="sub-title">Label Greenfin (France)</div>
+      <ul class="kp-list">
+        <li>Délivré par l'État français — finance la <strong>transition énergétique et écologique</strong></li>
+        <li>Exclusion totale de toute la chaîne fossile</li>
+        <li>Exclusions complémentaires (seuil &gt;30% CA) : déchets, incinération, agriculture sur tourbières…</li>
+        <li>Seulement 5,9% des fonds, 2,5% des encours → label le plus exigeant</li>
+      </ul>
+
+      <div class="sub-title">SBTi (Science Based Targets initiative)</div>
+      <div class="key-def">Label pour les <strong>entreprises engagées sur une trajectoire climatique scientifique</strong>. Process : Commit → Develop → Submit → Communicate (24 mois) → Disclose. Plus de 2/3 des entreprises SBTi sont alignées 1,5°C.</div>
+
+      <div class="sub-title">Obligations durables — Marché (Climate Bonds Initiative)</div>
+      <div class="stats-row">
+        <div class="stat-block"><div class="number-stat">5 500</div><div class="number-label">Mds$ émissions cumulées GSS+ fin 2023</div></div>
+        <div class="stat-block"><div class="number-stat">670</div><div class="number-label">Mds$ green bonds émis en 2024</div></div>
+        <div class="stat-block"><div class="number-stat">3 000</div><div class="number-label">Mds$/an nécessaires pour la transition</div></div>
+      </div>
+
+      <div class="sub-title">2 grandes catégories</div>
+      <div class="grid-2">
+        <div class="card-mini">
+          <h4 style="color:var(--green)">Use of Proceeds</h4>
+          <p>Fonds fléchés sur projets spécifiques.<br>→ Green bonds (65%), Social bonds (18%), Sustainability bonds (17%)</p>
+        </div>
+        <div class="card-mini">
+          <h4 style="color:var(--blue)">Liées aux objectifs ESG</h4>
+          <p>Fonds non fléchés mais coupon lié à la performance ESG.<br>→ Sustainability-linked bonds (SLB)</p>
+        </div>
+      </div>
+
+      <div class="sub-title">4 Piliers d'un Green Bond éligible (GBP)</div>
+      <ul class="kp-list">
+        <li><span class="tag tag-green">1</span> <strong>Use of proceeds</strong> — projets verts éligibles (ENR, efficacité, transport propre, eau, biodiversité…)</li>
+        <li><span class="tag tag-green">2</span> <strong>Processus de sélection</strong> — critères et objectifs environnementaux clairs</li>
+        <li><span class="tag tag-green">3</span> <strong>Gestion des fonds</strong> — traçabilité rigoureuse (compte dédié)</li>
+        <li><span class="tag tag-green">4</span> <strong>Reporting</strong> — projets financés, montants alloués, impacts quantitatifs/qualitatifs</li>
+      </ul>
+
+      <div class="sub-title">Le Greenium</div>
+      <div class="key-def"><strong>Greenium = rendement obligation verte − rendement obligation classique comparable.</strong> Si négatif → les investisseurs acceptent un rendement moindre car l'obligation est verte. Pour le Bund vert allemand (0% 15/08/2030) : moyenne de <strong>-3,12 bps</strong>, fourchette entre -7 bps et +1 bp.</div>
+    </div>
+  </div>
+
+  <!-- SECTION 8 : GREENWASHING & INCIDENTS -->
+  <div class="section">
+    <div class="section-header" onclick="toggleSection(this)">
+      <div class="section-num" style="background:rgba(248,113,113,0.2);color:var(--red)">08</div>
+      <div class="section-title">Incidents ESG & Greenwashing</div>
+      <div class="section-toggle">▾</div>
+    </div>
+    <div class="section-body">
+      <div class="key-def">Les incidents ESG sur la communication environnementale sont <strong>en forte expansion</strong> dans toutes les régions depuis 2018, avec l'Europe en tête.</div>
+      <div class="sub-title">4 catégories causales</div>
+      <ul class="kp-list">
+        <li><strong>Pressions de marché :</strong> demande investisseurs, concurrence entre entreprises</li>
+        <li><strong>Environnement réglementaire :</strong> règles floues ou insuffisantes, manque de contrôle</li>
+        <li><strong>Facteurs psychologiques :</strong> biais optimistes, vision court-termiste</li>
+        <li><strong>Facteurs organisationnels :</strong> culture d'entreprise, systèmes d'incitation, mauvaise circulation de l'information</li>
+      </ul>
+
+      <div class="sub-title">Finance durable en gestion d'actifs — Europe vs USA</div>
+      <div class="grid-2">
+        <div class="card-mini">
+          <h4 style="color:var(--blue)">🇪🇺 Europe — marché diffus</h4>
+          <p>Top 20 = 56% du marché. Nombreux acteurs &gt;10 Mds$. Le durable est <strong>mainstream</strong>.</p>
+        </div>
+        <div class="card-mini">
+          <h4 style="color:var(--red)">🇺🇸 USA — marché concentré</h4>
+          <p>Top 20 = 86,5% du marché. Le durable reste <strong>une niche</strong>.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</div><!-- fin page cours -->
+
+<!-- ============================================================ FLASHCARDS -->
+<div id="page-flashcards" class="page">
+<div class="fc-container">
+
+  <div class="fc-header">
+    <h2>🃏 Flashcards ISR</h2>
+    <p>Cliquez sur la carte pour révéler la réponse · Évaluez votre maîtrise</p>
+  </div>
+
+  <!-- FILTERS -->
+  <div class="fc-filters" id="fc-filters">
+    <button class="fc-filter active" onclick="filterCards('all',this)">Toutes</button>
+    <button class="fc-filter" onclick="filterCards('definitions',this)">Définitions</button>
+    <button class="fc-filter" onclick="filterCards('reglementation',this)">Réglementation</button>
+    <button class="fc-filter" onclick="filterCards('instruments',this)">Instruments</button>
+    <button class="fc-filter" onclick="filterCards('chiffres',this)">Chiffres clés</button>
+    <button class="fc-filter" onclick="filterCards('processus',this)">Processus</button>
+  </div>
+
+  <!-- SCORES -->
+  <div class="score-row">
+    <div class="score-badge good">✅ <span id="score-good">0</span> Maîtrisées</div>
+    <div class="score-badge bad">❌ <span id="score-bad">0</span> À revoir</div>
+  </div>
+
+  <!-- PROGRESS -->
+  <div class="fc-counter">
+    <span>Carte <strong id="current-num">1</strong> / <strong id="total-num">1</strong></span>
+    <span id="fc-category-label"></span>
+  </div>
+  <div class="fc-progress-bar">
+    <div class="fc-progress-fill" id="fc-progress" style="width:0%"></div>
+  </div>
+
+  <!-- CARD -->
+  <div class="flashcard-wrap" onclick="flipCard()">
+    <div class="flashcard" id="flashcard">
+      <div class="fc-face fc-front">
+        <div class="fc-label">Question</div>
+        <div class="fc-question" id="fc-question">Chargement…</div>
+        <div class="fc-hint">👆 Cliquer pour révéler la réponse</div>
+      </div>
+      <div class="fc-face fc-back">
+        <div class="fc-label">Réponse</div>
+        <div class="fc-answer" id="fc-answer"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONTROLS -->
+  <div class="fc-controls">
+    <button class="fc-btn btn-flip" onclick="flipCard()">↩ Retourner</button>
+    <button class="fc-btn btn-good" onclick="markCard(true)">✅ Je sais</button>
+    <button class="fc-btn btn-bad" onclick="markCard(false)">❌ À revoir</button>
+  </div>
+
+  <div class="fc-nav">
+    <button class="fc-btn btn-prev" onclick="prevCard()">← Précédente</button>
+    <button class="fc-btn btn-shuffle" onclick="shuffleCards()">🔀 Mélanger</button>
+    <button class="fc-btn btn-reset" onclick="resetAll()">↺ Reset</button>
+  </div>
+
+  <!-- RESULT -->
+  <div class="fc-result" id="fc-result">
+    <h3>Session terminée ! 🎉</h3>
+    <div class="result-score" id="result-pct">0%</div>
+    <p style="color:var(--muted)">cartes maîtrisées</p>
+    <br>
+    <button class="fc-btn btn-shuffle" onclick="resetAll()" style="margin-top:1rem;padding:12px 32px;font-size:1rem">↺ Recommencer</button>
+  </div>
+
+  <div class="kb-hint">← → flèches pour naviguer · Espace pour retourner</div>
+
+</div>
+</div><!-- fin page flashcards -->
+
+<script>
+// ===== PAGE TOGGLE =====
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  event.target.classList.add('active');
+}
+
+// ===== SECTION TOGGLE =====
+function toggleSection(header) {
+  header.parentElement.classList.toggle('open');
+}
+
+// ===== FLASHCARDS DATA =====
+const ALL_CARDS = [
+  // DEFINITIONS
+  {cat:'definitions', q:"Qu'est-ce que le lobbying ESG ?", a:"Ensemble des actions visant à <strong>influencer les règles, normes et comportements</strong> des acteurs économiques afin d'aligner le système financier et les entreprises avec des objectifs ESG. Il agit à l'échelle du <em>système</em> (≠ engagement actionnarial qui agit à l'intérieur des entreprises)."},
+  {cat:'definitions', q:"Définissez l'engagement ESG actionnarial.", a:"Processus par lequel un investisseur <strong>entre en dialogue avec une entreprise</strong> pour influencer ses pratiques, sa stratégie ou sa gouvernance vers davantage de durabilité. Mécanisme informel (direct management, discussions stratégiques, pression progressive) ≠ vote institutionnel."},
+  {cat:'definitions', q:"Qu'est-ce que le voting ESG ?", a:"Capacité des investisseurs à <strong>orienter ou contester</strong> les décisions du management en utilisant leur légitimité de propriétaires. C'est le seul moment où le rapport de force entre investisseurs et management devient <em>visible</em>."},
+  {cat:'definitions', q:"Définissez l'impact investing (GIIN 2021).", a:"Investissements réalisés avec l'intention de générer un <strong>impact social et environnemental positif, mesurable</strong>, en plus d'un rendement financier. 3 dimensions : <em>Intentionnalité</em>, <em>Additionnalité</em>, <em>Mesurabilité</em>."},
+  {cat:'definitions', q:"Qu'est-ce que le proxy voting ?", a:"Délégation du droit de vote à un tiers (représentant). Pratique industrialisée car les asset managers détiennent des milliers d'entreprises et ne peuvent pas assister à toutes les AG. Acteurs clés : <strong>ISS</strong> et <strong>Glass Lewis</strong>."},
+  {cat:'definitions', q:"Quelle différence entre un label et une classification réglementaire (SFDR) ?", a:"Un <strong>label</strong> = critères précis & publics + validation par organisme <strong>indépendant</strong>. Une classification SFDR (Art. 8/9) = <strong>auto-déclaration</strong> du gestionnaire, pas de certification externe systématique → ce ne sont PAS des labels."},
+  {cat:'definitions', q:"Qu'est-ce que le greenium ?", a:"<strong>Greenium = rendement obligation verte − rendement obligation classique comparable.</strong> Si négatif : l'obligation verte rend moins → l'investisseur paie une prime de durabilité. Exemple : Bund vert allemand 2030 → moyenne de <em>-3,12 bps</em>."},
+  {cat:'definitions', q:"Qu'est-ce qu'une obligation 'use of proceeds' ?", a:"Obligation dont les fonds sont <strong>fléchés</strong> vers des projets spécifiques (green bonds → environnement ; social bonds → social ; sustainability bonds → les deux). Représente 65% green + 18% social + 17% sustainability."},
+  {cat:'definitions', q:"Qu'est-ce qu'un sustainability-linked bond ?", a:"Obligation dont les fonds <strong>ne sont pas fléchés</strong> vers des projets précis, mais dont les <strong>conditions financières</strong> (coupon, pénalités) dépendent de l'atteinte d'objectifs ESG par l'émetteur."},
+  {cat:'definitions', q:"Qu'est-ce qu'un twin bond ?", a:"Deux obligations émises par le <strong>même émetteur</strong>, avec même maturité, même coupon, même date d'émission, mêmes caractéristiques financières — l'une classique, l'autre verte. Outil idéal pour mesurer le greenium en éliminant presque tous les biais."},
+  {cat:'definitions', q:"Définissez la double matérialité (CSRD).", a:"L'entreprise doit analyser et publier dans deux directions : (1) comment les <strong>enjeux ESG impactent sa performance financière</strong> (matérialité financière) ; (2) comment <strong>ses activités impactent l'environnement et la société</strong> (matérialité d'impact)."},
+  {cat:'definitions', q:"Qu'est-ce que l'additionnalité dans l'impact investing ?", a:"L'impact positif <strong>n'aurait pas eu lieu sans cet investissement spécifique</strong>. Question clé : qu'aurait-il se passé sans cet investissement ? Les bénéficiaires auraient-ils eu accès à d'autres financements ?"},
+
+  // REGLEMENTATION
+  {cat:'reglementation', q:"Citez et décrivez les 5 piliers du Plan d'Action Européen Finance Durable.", a:"<strong>1. EU Taxonomy</strong> — classification activités durables<br><strong>2. CSRD</strong> — reporting durabilité entreprises<br><strong>3. SFDR</strong> — disclosure acteurs financiers<br><strong>4. MiFID II / IDD</strong> — ESG dans conseil en investissement<br><strong>5. EU Benchmark</strong> — gouvernance des indices"},
+  {cat:'reglementation', q:"Quels sont les 3 critères cumulatifs pour qu'une activité soit alignée avec la Taxonomie UE ?", a:"(1) Respect des <strong>critères techniques</strong> définis par la Taxonomie<br>(2) Principe <strong>Do No Significant Harm (DNSH)</strong> — ne pas nuire significativement aux autres objectifs<br>(3) Respect des <strong>garanties sociales minimales</strong>"},
+  {cat:'reglementation', q:"Citez les 6 objectifs environnementaux de la Taxonomie UE.", a:"1. Atténuation du changement climatique<br>2. Adaptation au changement climatique<br>3. Utilisation durable & protection des ressources en eau<br>4. Transition vers une économie circulaire<br>5. Prévention & réduction de la pollution<br>6. Protection & restauration de la biodiversité"},
+  {cat:'reglementation', q:"CSRD : quel est le périmètre d'application ? Combien d'entreprises ?", a:"Toutes les grandes entreprises UE avec <strong>2 des 3 critères</strong> : 250 employés / 40 M€ CA / 20 M€ bilan. + Toutes les sociétés cotées (sauf micro). + Certaines non-UE actives dans l'UE. Passage de <em>~11 000</em> (NFRD) à <em>~50 000</em> entreprises."},
+  {cat:'reglementation', q:"Décrivez les 3 articles du SFDR.", a:"<strong>Article 6</strong> : fonds 'Autres' — pas de caractéristiques E/S spécifiques.<br><strong>Article 8</strong> : fonds 'ESG' — promeuvent des caractéristiques E/S. Sans ou avec investissements durables.<br><strong>Article 9</strong> : fonds 'Durables' — objectif d'investissement durable, alignés Taxonomie ou objectif E/S."},
+  {cat:'reglementation', q:"Qu'est-ce que le Fit for 55 ? Quels objectifs chiffrés ?", a:"Paquet législatif européen visant à réduire les émissions GES de l'UE d'au moins <strong>-55% d'ici 2030</strong> et atteindre la neutralité climatique en 2050. Trois principes : transition juste, compétitivité/innovation, concurrence équitable. Dotation : <em>65 Mds€</em>. Objectif forestier : <em>310 Mt CO₂e absorbés</em>."},
+  {cat:'reglementation', q:"Combien de réglementations ESG existent dans le monde ? Quelle région domine ?", a:"<strong>868 réglementations et guidelines ESG</strong> (PRI, 2022). Forte accélération depuis l'Accord de Paris (2015). <em>L'Europe</em> domine avec 525 textes (vs 149 Asie, 46 Amérique du Nord, 41 Amérique du Sud). 78,8% issus de gouvernements/régulateurs."},
+  {cat:'reglementation', q:"À qui s'appliquent les réglementations ESG ?", a:"72% aux <strong>corporates</strong> — 61% aux <strong>asset owners</strong> — 40% aux <strong>managers</strong>"},
+  {cat:'reglementation', q:"Qu'est-ce que le SBTi et comment fonctionne le processus ?", a:"<em>Science Based Targets initiative</em> — label pour entreprises engagées sur une trajectoire climatique. Process : <strong>Commit</strong> (lettre d'intention) → <strong>Develop</strong> (objectif réduction) → <strong>Submit</strong> (validation SBTi) → <strong>Communicate</strong> (24 mois) → <strong>Disclose</strong> (reporting annuel). Plus des 2/3 alignés 1,5°C."},
+
+  // INSTRUMENTS
+  {cat:'instruments', q:"Citez les 4 piliers d'un green bond éligible (Green Bond Principles).", a:"<strong>1. Use of proceeds</strong> — fonds fléchés sur projets verts éligibles<br><strong>2. Processus de sélection des projets</strong> — critères et objectifs environnementaux clairs<br><strong>3. Gestion des fonds</strong> — traçabilité rigoureuse (compte dédié)<br><strong>4. Reporting</strong> — projets, montants alloués, impacts quantitatifs/qualitatifs"},
+  {cat:'instruments', q:"Quels secteurs sont éligibles aux Green Bonds (Use of Proceeds) ?", a:"Énergies renouvelables, efficacité énergétique, transport propre, gestion durable de l'eau, prévention de la pollution, bâtiments verts, économie circulaire, adaptation au changement climatique, protection de la biodiversité."},
+  {cat:'instruments', q:"Décrivez les 7 étapes de la finance responsable (continuum).", a:"1. Exclusion (negative/worst-in-class) → 2. Values (norms-based) → 3. Selection (best-in-class) → 4. Thematic (green bonds) → 5. Integration (ESG dans gestion) → 6. Engagement (voting/activism) → 7. <strong>Impact investing</strong>"},
+  {cat:'instruments', q:"Qu'est-ce qu'un fonds Article 9 et quelles sont ses sous-catégories ?", a:"Fonds ayant pour objectif l'<strong>investissement durable</strong> (E ou S). Sous-catégories : alignés Taxonomie UE / alignés objectif environnemental / alignés objectif social. Obligations : double matérialité + objectifs E/S + Taxonomie."},
+  {cat:'instruments', q:"Qu'est-ce que le label Greenfin ? Quelles exclusions ?", a:"Label français délivré par l'État — garantit financement de la transition énergétique et écologique. <strong>Exclusion totale</strong> de toute la chaîne fossile. Exclusions complémentaires (&gt;30% CA) : stockage déchets sans captage GES, incinération sans valorisation, agriculture sur tourbières. Seulement 5,9% des fonds, 2,5% des encours."},
+  {cat:'instruments', q:"Qu'est-ce qu'un fonds Article 8 ?", a:"Fonds qui <strong>promeut des caractéristiques E et/ou S</strong> spécifiques (sans forcément en faire l'objectif principal). Disclosure : double matérialité + caractéristiques E/S + Taxonomie. Peut être sans investissements durables ou avec une part d'investissements durables (alignés Taxonomie, objectif E, ou objectif S)."},
+
+  // CHIFFRES CLÉS
+  {cat:'chiffres', q:"Quelles sont les données clés d'Amundi sur l'engagement 2025 ?", a:"<strong>2 948 émetteurs uniques</strong> engagés dans toutes les régions. Équipe dédiée de plus de <strong>40 analystes ESG et Vote</strong>. L'engagement couvre aussi les fonds gérés passivement."},
+  {cat:'chiffres', q:"Données clés du marché Russell 3000 sur le vote ESG (2022).", a:"<strong>555 résolutions votées</strong> en 2022 (moins d'1 par 5 entreprises). Soutien moyen : <em>&lt;40%</em> en gouvernance, <em>29%</em> en environnement et social."},
+  {cat:'chiffres', q:"Quel est le gap de financement annuel pour la transition énergétique ?", a:"<strong>1 600 à 3 800 Mds$ par an</strong> manquants. COP 26 : 450 institutions financières représentant <em>130 000 Mds$</em> d'actifs engagés Net Zero 2050."},
+  {cat:'chiffres', q:"Données clés marché obligations durables (Climate Bonds Initiative, fin 2023).", a:"<strong>5 500 Mds$</strong> d'émissions cumulées GSS+. Dont <em>4 400 Mds$ (80%)</em> alignés standards durables. Marché : 65% green bonds / 18% social bonds / 17% sustainability bonds. En 2024 : ~670 Mds$ green bonds émis vs ~3 000 Mds$ nécessaires."},
+  {cat:'chiffres', q:"Quel est l'état du marché des labels ESG en Europe (Novethic) ?", a:"<strong>2 733</strong> fonds labellisés, <strong>1 307 Mds€</strong> d'AUM, soit ~7% du marché. &gt;75% en Art. 8. Label ISR : 1 354 fonds (783 Mds€ = 47,8% des AUM). Towards Sustainability : 771 fonds (539 Mds€). Ensemble : 66,8% des fonds, <em>80,8% des encours</em>."},
+  {cat:'chiffres', q:"Rapport ODD 2023 : les grands reculs chiffrés.", a:"<strong>575 M</strong> de personnes resteront pauvres en 2030. <strong>+600 M</strong> touchés par la faim d'ici 2030. Température : <em>+1,1°C</em> déjà atteint, seuil <em>1,5°C</em> proche. Leaders : Finlande (1er/167, score 86,4). Lanterne : Soudan du Sud (167e, score 40,1)."},
+  {cat:'chiffres', q:"Investissements mondiaux en infrastructure durable : citer les 3 grands plans.", a:"🇺🇸 <strong>American Jobs Plan</strong> : 2 000 Mds$<br>🇪🇺 <strong>Next Gen EU</strong> : 750 Mds$<br>🇨🇳 <strong>New Infra Initiative</strong> : 1 400 Mds$"},
+  {cat:'chiffres', q:"Scénario AIE : différences entre +1,5°C et +2°C pour les récifs coralliens ?", a:"+1,5°C → disparition de <strong>70 à 90%</strong> des récifs coralliens. +2°C → disparition d'environ <strong>99%</strong> des récifs. Effondrement quasi-total des écosystèmes coralliens."},
+  {cat:'chiffres', q:"Quelles sont les émissions mondiales de GES entre 1990 et 2019 ?", a:"Passage de <strong>38 Gt</strong> à <strong>59 Gt CO₂-eq</strong> (+54%). Le CO₂-FFI a augmenté de <em>167%</em>. Le Scope 3 représente ~<em>80%</em> des émissions totales de la plupart des secteurs."},
+  {cat:'chiffres', q:"Performance du fonds KCS Global Infra ESG vs benchmark (2023-2025).", a:"2023 : +10,1% (MSCI -3,2%). 2024 : +24,9% (MSCI +26%). 2025 : +28,1% (MSCI +5,5%). 2026 (janv.) : +4,1% (MSCI +1,4%). Volatilité 2025 : 14,93% vs 11,65%."},
+  {cat:'chiffres', q:"Processus Kepler Cheuvreux : de combien de titres part-on et où arrive-t-on ?", a:"De <strong>+2 500 titres</strong> (large & mid cap Europe/Amérique/Asie) → ~300 après sélection thématique (33 sous-secteurs) → ~230 après filtres ESG (exclusions sectorielles, normatives, laggards ESG) → <strong>60 titres</strong> en conviction. Turnover : ~50%/an."},
+
+  // PROCESSUS
+  {cat:'processus', q:"Décrivez les 7 étapes du processus de proxy voting.", a:"1. Entreprise fixe l'ordre du jour de l'AG<br>2. Banque dépositaire vérifie les actionnaires (record date)<br>3. Actionnaires reçoivent les documents de vote<br>4. Recommandations de vote via sociétés spécialisées (ISS, Glass Lewis)<br>5. Instructions de vote via intermédiaire<br>6. Vote à l'AG<br>7. Confirmation du vote pris en compte"},
+  {cat:'processus', q:"Quelles sont les 6 formes d'engagement d'un actionnaire activiste ?", a:"1. S'engager discrètement avec management/CA<br>2. Proposer des résolutions d'actionnaires<br>3. Voter (coalitions, désaccord)<br>4. Exprimer publiquement son mécontentement (médias)<br>5. Initier une prise de contrôle (participation significative)<br>6. Se retirer (vendre, position opposée, désinvestir)"},
+  {cat:'processus', q:"Décrivez le modèle I·A·M de l'impact investing.", a:"<strong>I — Intentionnalité</strong> : intention de créer un impact mesurable (objectifs ex-ante, alignement ODD, gouvernance de l'impact).<br><strong>A — Additionnalité</strong> : impact qui n'aurait pas eu lieu sans l'investissement (accès au financement, engagement avec les investis).<br><strong>M — Mesurabilité</strong> : KPIs, méthodologie de reporting, fréquence, utilisation dans les décisions."},
+  {cat:'processus', q:"Comment fonctionne le processus d'investissement du fonds Kepler Cheuvreux Infrastructure ESG ?", a:"<strong>1. Univers</strong> : +2 500 stocks large/mid (Europe/Amérique/Asie)<br><strong>2. Thématique</strong> : 33 sous-secteurs GICS infrastructure → ~300<br><strong>3. Filtre ESG</strong> : exclusions sectorielles (tabac/charbon/pétrole) + normatives (controverses, UN Global Compact) + laggards ESG + contribution ODD → ~230<br><strong>4. Conviction & Pondération</strong> : ROIC, marge opérationnelle, croissance 5 ans, 20% min/région → <strong>60 titres</strong>"},
+  {cat:'processus', q:"Pourquoi le Scope 3 est-il 'souvent oublié' et pourtant critique ?", a:"Il représente <strong>~80% des émissions totales</strong> de la plupart des secteurs car il couvre toute la chaîne de valeur non contrôlée (transport amont/aval, achats, utilisation des produits vendus, investissements). Difficulté de collecte des données, mais essentiel pour les secteurs pétrole/gaz, chimie, ciment, transport aérien."},
+  {cat:'processus', q:"Quelles sont les 4 catégories qui expliquent la montée des incidents ESG (greenwashing) ?", a:"1. <strong>Pressions de marché</strong> : demande investisseurs, concurrence<br>2. <strong>Environnement réglementaire</strong> : règles floues, manque de contrôle<br>3. <strong>Facteurs psychologiques</strong> : biais optimistes, court-termisme<br>4. <strong>Facteurs organisationnels</strong> : culture d'entreprise, incitations, mauvaise circulation de l'info"},
+  {cat:'processus', q:"Comment fonctionne le label ISR français vs le label Greenfin ?", a:"<strong>Label ISR</strong> : label généraliste ESG best-in-class, le plus répandu (1 354 fonds, 783 Mds€). Critères ESG larges.<br><strong>Label Greenfin</strong> : label spécifique transition énergétique, le plus exigeant. Exclusion totale des fossiles. Seulement 120 fonds, 22 Mds€ (1,34% des AUM labellisés)."},
+  {cat:'processus', q:"Expliquez la différence Scope 1 / Scope 2 / Scope 3 avec exemples de La Compagnie des Alpes.", a:"<strong>Scope 1</strong> (émissions directes) : consommation véhicules/machines & infrastructures & bâtiments de l'entreprise.<br><strong>Scope 2</strong> (indirectes énergie) : inclus dans activités directes (consommation électricité).<br><strong>Scope 3 amont</strong> : fret entrant, déplacements domicile-travail, matières premières des infrastructures.<br><strong>Scope 3 aval</strong> : déplacements des clients, déchets de l'entreprise."},
+];
+
+// ===== STATE =====
+let deck = [...ALL_CARDS];
+let current = 0;
+let scoreGood = 0;
+let scoreBad = 0;
+let isFlipped = false;
+let seen = new Set();
+let activeFilter = 'all';
+
+function filterCards(cat, btn) {
+  activeFilter = cat;
+  document.querySelectorAll('.fc-filter').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  if (cat === 'all') { deck = [...ALL_CARDS]; }
+  else { deck = ALL_CARDS.filter(c => c.cat === cat); }
+  resetAll();
+}
+
+function loadCard() {
+  if (current >= deck.length) {
+    showResult(); return;
+  }
+  const card = deck[current];
+  document.getElementById('fc-question').innerHTML = card.q;
+  document.getElementById('fc-answer').innerHTML = card.a;
+  document.getElementById('current-num').textContent = current + 1;
+  document.getElementById('total-num').textContent = deck.length;
+  document.getElementById('fc-progress').style.width = ((current) / deck.length * 100) + '%';
+  const cats = {definitions:'Définitions',reglementation:'Réglementation',instruments:'Instruments',chiffres:'Chiffres clés',processus:'Processus'};
+  document.getElementById('fc-category-label').textContent = cats[card.cat] || '';
+  // Reset flip
+  const fc = document.getElementById('flashcard');
+  fc.classList.remove('flipped');
+  isFlipped = false;
+}
+
+function flipCard() {
+  const fc = document.getElementById('flashcard');
+  fc.classList.toggle('flipped');
+  isFlipped = !isFlipped;
+}
+
+function markCard(good) {
+  if (!isFlipped) { flipCard(); return; }
+  if (good) scoreGood++; else scoreBad++;
+  document.getElementById('score-good').textContent = scoreGood;
+  document.getElementById('score-bad').textContent = scoreBad;
+  current++;
+  if (current < deck.length) loadCard();
+  else showResult();
+}
+
+function prevCard() {
+  if (current > 0) { current--; loadCard(); }
+}
+
+function shuffleCards() {
+  for (let i = deck.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [deck[i], deck[j]] = [deck[j], deck[i]];
+  }
+  current = 0;
+  loadCard();
+}
+
+function resetAll() {
+  current = 0; scoreGood = 0; scoreBad = 0; isFlipped = false;
+  document.getElementById('score-good').textContent = 0;
+  document.getElementById('score-bad').textContent = 0;
+  document.getElementById('fc-result').style.display = 'none';
+  document.querySelector('.flashcard-wrap').style.display = 'block';
+  document.querySelector('.fc-controls').style.display = 'flex';
+  document.querySelector('.fc-nav').style.display = 'flex';
+  document.querySelector('.fc-progress-bar').style.display = 'block';
+  document.querySelector('.fc-counter').style.display = 'flex';
+  loadCard();
+}
+
+function showResult() {
+  const pct = deck.length > 0 ? Math.round(scoreGood / deck.length * 100) : 0;
+  document.getElementById('result-pct').textContent = pct + '%';
+  document.querySelector('.flashcard-wrap').style.display = 'none';
+  document.querySelector('.fc-controls').style.display = 'none';
+  document.querySelector('.fc-nav').style.display = 'none';
+  document.querySelector('.fc-progress-bar').style.display = 'none';
+  document.querySelector('.fc-counter').style.display = 'none';
+  document.getElementById('fc-result').style.display = 'block';
+  document.getElementById('fc-progress').style.width = '100%';
+}
+
+// KEYBOARD
+document.addEventListener('keydown', e => {
+  if (document.getElementById('page-flashcards').classList.contains('active')) {
+    if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); flipCard(); }
+    if (e.key === 'ArrowRight') markCard(true);
+    if (e.key === 'ArrowLeft') markCard(false);
+    if (e.key === 'Backspace') prevCard();
+  }
+});
+
+// Init
+loadCard();
+</script>
+</body>
+</html>
